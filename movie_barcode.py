@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import os
+import queue
 import shutil
 import argparse
+import threading
 import subprocess
-import os, os.path
 from PIL import Image, ImageDraw
 
 parser = argparse.ArgumentParser()
@@ -19,21 +21,25 @@ parser.add_argument('-nd', '--nodelete', action='store_true',
 parser.add_argument('-nf', '--noframes', action='store_true',
                     help='Won\'t create the frames. Must already have them in a directory called frames.')
 parser.add_argument('-fr', '--framerate', type=int,
-                    help='Set the framerate for breaking the movie into frames. Default is 25.')
+                    help='Set the framerate for breaking the movie into frames. Default is 1/24.')
+parser.add_argument('-t', '--threads', type=int,
+                    help='Number of threads to be spawned when finding frame colors. Default is 8.')
 args = parser.parse_args()
 
 
 def create_movie_frames(infile):
     os.chdir('./frames')
 
-    ffmpeg_args = ['ffmpeg', '-i', '../' + infile, '-f', 'image2', 'image-%07d.png']
+    ffmpeg_args = ['ffmpeg', '-threads', '0', '-i', '../' + infile, '-f', 'image2', 'image-%07d.png']
 
     if args.framerate:
         ffmpeg_args += ['-r', framerate]
+    else:
+        ffmpeg_args += ['-r', '1/24']
 
     output = open('ffmpeg_log.txt', 'w')
 
-    print('Creating frames (this will take a while)...')
+    print('Creating frames (this might take a while)...')
     subprocess.call(ffmpeg_args, stderr=output, stdout=subprocess.PIPE)
 
     output.close()
@@ -51,27 +57,66 @@ def find_frame_bar_color(infile, last_col=None):
     return colors[0][1]
 
 
-def get_image_colors():
+def get_image_colors(thread_id, q, images):
     colors = []
-    last_col = None
-    print('Getting frame colors (this could take a while)...')
-    for img in os.listdir(os.getcwd()):
-        if img.endswith('.png'):
-            last_col = find_frame_bar_color(img, last_col=last_col)
+    for img in images:
+        colors.append(find_frame_bar_color(img))
 
-            if not colors:
-                colors.append(last_col)
-            elif colors[-1] != last_col:
-                colors.append(last_col)
+    q.put((thread_id, colors))
 
-    # return back to the original directory
+
+def distribute_frame_lists(n):
+    img_list = [img for img in os.listdir(os.getcwd()) if img.endswith('.png')]
+    slice_size = len(img_list) // n
+    remainder = len(img_list) % n
+    result = []
+    iterater = iter(img_list)
+
+    for i in range(n):
+        result.append([])
+        for j in range(slice_size):
+            result[i].append(next(iterater))
+        if remainder:
+            result[i].append(next(iterater))
+            remainder -= 1
+
+    return result
+
+
+def spawn_threads():
+    # change directories if it already isn't in frames
+    if not '/frames' in os.getcwd():
+        os.chdir('frames')
+
+    q = queue.Queue()
+    num_threads = args.threads if args.threads else 8
+
+    # get a distributed list of images for the threads
+    images = distribute_frame_lists(num_threads)
+
+    threads = []
+    for i in range(num_threads):
+        thread = threading.Thread(target=get_image_colors, args=(i, q, images[i]))
+        threads.append(thread)
+
+    print('Generating frame colors...')
+    for thread in threads:
+        thread.daemon = True
+        thread.start()
+
+    thread_results = [None] * num_threads
+    for i in range(num_threads):
+        result = q.get()
+        thread_results[result[0]] = result[1]
+
+    # return to the original directory
     os.chdir('..')
 
-    return colors
+    return [item for sublist in thread_results for item in sublist]
 
 
 def create_barcode(colors, bar_width=5, height=1200, width=1920):
-    barcode_width = len(colors) + bar_width
+    barcode_width = len(colors) * bar_width
     bc = Image.new('RGB', (barcode_width, height))
     draw = ImageDraw.Draw(bc)
 
@@ -84,7 +129,7 @@ def create_barcode(colors, bar_width=5, height=1200, width=1920):
 
     del draw
 
-    bc.resize((width, height))
+    bc = bc.resize((width, height), Image.ANTIALIAS)
     bc.save('barcode.png', 'PNG')
 
 
@@ -107,7 +152,7 @@ def main():
     if not args.noframes:
         create_movie_frames(fname)
 
-    colors = get_image_colors()
+    colors = spawn_threads()
     create_barcode(colors, bar_width=bar_width, height=height, width=width)
 
     if not args.nodelete:
