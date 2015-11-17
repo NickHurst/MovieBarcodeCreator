@@ -34,7 +34,7 @@ def create_movie_frames(infile):
     output = open('ffmpeg_log.txt', 'w')
 
     print('Creating frames (this will take a while)...')
-    subprocess.run(ffmpeg_args, stderr=output, stdout=subprocess.PIPE)
+    subprocess.call(ffmpeg_args, stderr=output, stdout=subprocess.PIPE)
 
     output.close()
 
