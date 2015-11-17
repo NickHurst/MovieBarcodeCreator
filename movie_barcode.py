@@ -10,6 +10,8 @@ from PIL import Image, ImageDraw
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str, help='movie filename')
+parser.add_argument('-fc', '--framecolors', action='store_true',
+                    help='A frame_colors.txt file exists in the movies directory.')
 parser.add_argument('-bw', '--barwidth', type=int, 
                     help='Set the width of the bars in the barcode. Default is 5px.')
 parser.add_argument('-ht', '--height', type=int,
@@ -20,7 +22,7 @@ parser.add_argument('-nd', '--nodelete', action='store_true',
                     help='Won\'t delete the movie frames after done executing.')
 parser.add_argument('-nf', '--noframes', action='store_true',
                     help='Won\'t create the frames. Must already have them in a directory called frames.')
-parser.add_argument('-fr', '--framerate', type=int,
+parser.add_argument('-fr', '--framerate', type=str,
                     help='Set the framerate for breaking the movie into frames. Default is 1/24.')
 parser.add_argument('-t', '--threads', type=int,
                     help='Number of threads to be spawned when finding frame colors. Default is 8.')
@@ -30,12 +32,9 @@ args = parser.parse_args()
 def create_movie_frames(infile):
     os.chdir('./frames')
 
-    ffmpeg_args = ['ffmpeg', '-threads', '0', '-i', '../' + infile, '-f', 'image2', 'image-%07d.png']
-
-    if args.framerate:
-        ffmpeg_args += ['-r', framerate]
-    else:
-        ffmpeg_args += ['-r', '1/24']
+    framerate = args.framerate if args.framerate else '1/24'
+    ffmpeg_args = ['ffmpeg', '-threads', '0', '-i', '../' + infile, '-r', framerate,
+                   '-f', 'image2', 'image-%07d.png']
 
     output = open('ffmpeg_log.txt', 'w')
 
@@ -115,13 +114,12 @@ def spawn_threads():
     return [item for sublist in thread_results for item in sublist]
 
 
-def create_barcode(colors, bar_width=5, height=1200, width=1920):
+def create_barcode(colors, bar_width, height, width):
     barcode_width = len(colors) * bar_width
     bc = Image.new('RGB', (barcode_width, height))
     draw = ImageDraw.Draw(bc)
 
     posx = 0
-
     print('Creating barcode...')
     for color in colors:
         draw.rectangle([posx, 0, posx + bar_width, height], fill=color)
@@ -141,19 +139,23 @@ def main():
         pass
 
     fname = args.filename
-    bar_width=5
-    height=1200
-    width=1920
-
-    if args.barwidth: bar_width = args.barwidth
-    if args.height: bar_height = args.height
-    if args.width: width = args.width
+    bar_width = args.barwidth if args.barwidth else 5
+    height = args.height if args.height else 1200
+    width = args.width if args.width else 1920
 
     if not args.noframes:
         create_movie_frames(fname)
 
-    colors = spawn_threads()
-    create_barcode(colors, bar_width=bar_width, height=height, width=width)
+    if not args.framecolors:
+        colors = spawn_threads()
+
+        with open('frame_colors.txt', 'w') as f:
+            f.write('\n'.join(colors))
+    else:
+        with open('frame_colors.txt', 'r') as f:
+            colors = f.read().splitlines()
+
+    create_barcode(colors, bar_width, height, width)
 
     if not args.nodelete:
         print('Cleaning up...')
