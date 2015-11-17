@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import ast
 import queue
 import shutil
 import argparse
@@ -150,10 +151,10 @@ def main():
         colors = spawn_threads()
 
         with open('frame_colors.txt', 'w') as f:
-            f.write('\n'.join(colors))
+            f.write('\n'.join('(%i, %i, %i, %i)' % x for x in colors))
     else:
         with open('frame_colors.txt', 'r') as f:
-            colors = f.read().splitlines()
+            colors = [ast.literal_eval(line) for line in f]
 
     create_barcode(colors, bar_width, height, width)
 
