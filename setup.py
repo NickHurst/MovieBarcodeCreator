@@ -30,8 +30,8 @@ setup(
 
     keywords='movie barcode',
 
-    packages=find_packages(),
-    install_requires=['Pillow'],
+    packages=['moviebarcode'],
+    install_requires=['Pillow', 'imageio'],
     entry_points={
         'console_scripts': [
             'moviebarcode = moviebarcode:main'
