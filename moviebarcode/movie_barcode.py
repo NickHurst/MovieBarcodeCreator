@@ -45,7 +45,7 @@ args = parser.parse_args()
 
 # check if there was no filename given and was not markd with frame colors
 if not args.infile and not args.framecolors and not args.noframes:
-    parser.error('and infile name is required unless -fc is passed.')
+    parser.error('and infile name is required unless -fc or -nf is passed.')
 
 if args.noframes and not os.path.exists('frames'):
     parser.error('the no frames argument was passed, but there is no frames directory.')
