@@ -1,0 +1,3 @@
+[console_scripts]
+moviebarcode = moviebarcode:main
+

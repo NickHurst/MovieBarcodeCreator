@@ -9,6 +9,7 @@ import subprocess
 import os, os.path
 from PIL import Image, ImageDraw
 
+
 parser = argparse.ArgumentParser()
 frame_group = parser.add_mutually_exclusive_group()
 barcode_group = parser.add_argument_group('Barcode Options', 'options for customizing the barcode.')
