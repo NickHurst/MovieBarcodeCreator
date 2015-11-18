@@ -6,7 +6,7 @@ This is a simple script to create "barcodes" from frames of a movie. This works 
 Installation:
 -------------
 
-This script requires Python3. And can be installed via pip:
+This script can be installed via pip (either python2 or 3):
 
     pip install moviebarcodecreator
 
