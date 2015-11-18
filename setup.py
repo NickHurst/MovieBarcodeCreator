@@ -4,12 +4,12 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(path.join(here, 'README_PyPi.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='moviebarcodecreator',
-    version='0.5.1',
+    version='0.5.3',
     description='A tool to capture frames from a video and create a barcode from it.',
     long_description=long_description,
 
