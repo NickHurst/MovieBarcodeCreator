@@ -47,23 +47,23 @@ Use this if you already have the movie frames inside a frames directory inside t
 
 The default behavior for the script is to delete all the frames it generates when it's done. Add this -nd flag and the frames directory and all the frames won't be deleted.
 
-####-ht, --height
+####-ht, --height HEIGHT
 
 Set the image height in pixels. Default is 1200px.
 
-####-bw, --barwidth
+####-bw, --barwidth BARWIDTH
 
 Set the width of each bar, before the image get's resized to its final width. Default is 5px.
 
-####-w, --width
+####-w, --width WIDTH
 
 Set the final width of the barcode in pixels. Default is 1920px.
 
-####-fr, --framerate
+####-fr, --framerate FRAMERATE
 
 You can set FFMPEG's frame rate with this. Default is 1/24. Keep in mind, the higher you set the framerate, the more frames are going to be generated and the longer the process will take.
 
-####-t, --threads
+####-t, --threads THREADS
 
 You can set the amount of threads python will use when generating the colors for the barcode. Default is 8.
 
@@ -94,11 +94,15 @@ Examples:
 
 ![500 Days of Summer](http://i.imgur.com/JNlmwLc.png)
 
-####A Goofy Movie *Default framerate*
+####A Goofy Movie 
+
+*Default framerate*
 
 ![Goofy Movie Default](http://i.imgur.com/WWLiUCc.png)
 
-####A Goofy Movie *higher framerate (1/2)*
+####A Goofy Movie 
+
+*higher framerate (1/2)*
 
 ![Goofy Movie Higher](http://i.imgur.com/zIejkfA.png)
 
