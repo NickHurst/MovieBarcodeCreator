@@ -9,7 +9,7 @@ with open(path.join(here, 'README_PyPi.rst'), encoding='utf-8') as f:
 
 setup(
     name='moviebarcodecreator',
-    version='0.6.4',
+    version='0.6.6',
     description='A tool to capture frames from a video and create a barcode from it.',
     long_description=long_description,
 

@@ -50,6 +50,9 @@ if not args.infile and not args.framecolors and not args.noframes:
 if args.noframes and not os.path.exists('frames'):
     parser.error('the no frames argument was passed, but there is no frames directory.')
 
+if args.framecolors and not os.path.isfile('frame_colors.txt'):
+    parser.error('the use frame_colors.txt argument was passed, but frame_colors.txt does not exist.')
+
 
 def create_movie_frames(infile):
     os.chdir('./frames')
