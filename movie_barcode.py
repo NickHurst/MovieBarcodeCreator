@@ -1,33 +1,44 @@
 #!/usr/bin/env python3
 
-import os
 import ast
 import queue
 import shutil
 import argparse
 import threading
 import subprocess
+import os, os.path
 from PIL import Image, ImageDraw
 
 parser = argparse.ArgumentParser()
-parser.add_argument('filename', type=str, help='movie filename')
-parser.add_argument('-fc', '--framecolors', action='store_true',
+frame_group = parser.add_mutually_exclusive_group()
+barcode_group = parser.add_argument_group('Barcode Options', 'options for customizing the barcode.')
+parser.add_argument('infile', type=str, nargs='?', help='video filename')
+parser.add_argument('-o', '--outfile', type=str, default='barcode.png',
+                    help='name of the generated barcode. Default is barcode.png')
+frame_group.add_argument('-fc', '--framecolors', action='store_true',
                     help='A frame_colors.txt file exists in the movies directory.')
-parser.add_argument('-bw', '--barwidth', type=int, 
+frame_group.add_argument('-nf', '--noframes', action='store_true',
+                    help='Won\'t create the frames. Must already have them in a directory called frames.')
+barcode_group.add_argument('-bw', '--barwidth', type=int, 
                     help='Set the width of the bars in the barcode. Default is 5px.')
-parser.add_argument('-ht', '--height', type=int,
+barcode_group.add_argument('-ht', '--height', type=int,
                     help='Set the height of the barcode. Default is 1200px.')
-parser.add_argument('-w', '--width', type=int,
+barcode_group.add_argument('-w', '--width', type=int,
                     help='Set the final width of the barcode. Default is 1920px.')
 parser.add_argument('-nd', '--nodelete', action='store_true',
                     help='Won\'t delete the movie frames after done executing.')
-parser.add_argument('-nf', '--noframes', action='store_true',
-                    help='Won\'t create the frames. Must already have them in a directory called frames.')
 parser.add_argument('-fr', '--framerate', type=str,
                     help='Set the framerate for breaking the movie into frames. Default is 1/24.')
 parser.add_argument('-t', '--threads', type=int,
                     help='Number of threads to be spawned when finding frame colors. Default is 8.')
 args = parser.parse_args()
+
+# check if there was no filename given and was not markd with frame colors
+if not args.infile and not args.framecolors and not args.noframes:
+    parser.error('and infile name is required unless -fc is passed.')
+
+if args.noframes and not os.path.exists('frames'):
+    parser.error('the no frames argument was passed, but there is no frames directory.')
 
 
 def create_movie_frames(infile):
@@ -115,7 +126,7 @@ def spawn_threads():
     return [item for sublist in thread_results for item in sublist]
 
 
-def create_barcode(colors, bar_width, height, width):
+def create_barcode(colors, bar_width, height, width, fname):
     barcode_width = len(colors) * bar_width
     bc = Image.new('RGB', (barcode_width, height))
     draw = ImageDraw.Draw(bc)
@@ -129,7 +140,7 @@ def create_barcode(colors, bar_width, height, width):
     del draw
 
     bc = bc.resize((width, height), Image.ANTIALIAS)
-    bc.save('barcode.png', 'PNG')
+    bc.save(fname, 'PNG')
 
 
 def main():
@@ -139,12 +150,12 @@ def main():
     except FileExistsError:
         pass
 
-    fname = args.filename
+    fname = args.infile
     bar_width = args.barwidth if args.barwidth else 5
     height = args.height if args.height else 1200
     width = args.width if args.width else 1920
 
-    if not args.noframes:
+    if not args.noframes and not args.framecolors:
         create_movie_frames(fname)
 
     if not args.framecolors:
@@ -156,7 +167,7 @@ def main():
         with open('frame_colors.txt', 'r') as f:
             colors = [ast.literal_eval(line) for line in f]
 
-    create_barcode(colors, bar_width, height, width)
+    create_barcode(colors, bar_width, height, width, args.outfile)
 
     if not args.nodelete:
         print('Cleaning up...')
