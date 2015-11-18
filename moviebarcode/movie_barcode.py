@@ -29,11 +29,11 @@ frame_group.add_argument('-fc', '--framecolors', action='store_true',
                     help='A frame_colors.txt file exists in the movies directory.')
 frame_group.add_argument('-nf', '--noframes', action='store_true',
                     help='Won\'t create the frames. Must already have them in a directory called frames.')
-barcode_group.add_argument('-bw', '--barwidth', type=int, 
+barcode_group.add_argument('-bw', '--barwidth', type=int, default=5,
                     help='Set the width of the bars in the barcode. Default is 5px.')
-barcode_group.add_argument('-ht', '--height', type=int,
+barcode_group.add_argument('-ht', '--height', type=int, default=1200,
                     help='Set the height of the barcode. Default is 1200px.')
-barcode_group.add_argument('-w', '--width', type=int,
+barcode_group.add_argument('-w', '--width', type=int, default=1920,
                     help='Set the final width of the barcode. Default is 1920px.')
 parser.add_argument('-nd', '--nodelete', action='store_true',
                     help='Won\'t delete the movie frames after done executing.')
@@ -160,13 +160,8 @@ def main():
     except OSError:
         pass
 
-    fname = args.infile
-    bar_width = args.barwidth if args.barwidth else 5
-    height = args.height if args.height else 1200
-    width = args.width if args.width else 1920
-
     if not args.noframes and not args.framecolors:
-        create_movie_frames(fname)
+        create_movie_frames(args.infile)
 
     if not args.framecolors:
         colors = spawn_threads()
@@ -177,7 +172,7 @@ def main():
         with open('frame_colors.txt', 'r') as f:
             colors = [ast.literal_eval(line) for line in f]
 
-    create_barcode(colors, bar_width, height, width, args.outfile)
+    create_barcode(colors, args.barwidth, args.height, args.width, args.outfile)
 
     if not args.nodelete:
         print('Cleaning up...')
