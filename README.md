@@ -1,7 +1,7 @@
 Python Movie Barcode Creator
 =============================
 
-This is a simple script to create "barcodes" from frames of a movie. This works by using ffmpeg to create images from the frames of the video. Then uses [Pillow](https://github.com/python-pillow/Pillow) to extract the most dominant color from each frame and then string them together into a "barcode."
+This is a simple script to create "barcodes" from frames of a movie. This works by using ffmpeg to create images from the frames of the video. Then uses [Pillow](https://github.com/python-pillow/Pillow) to extract the dominant color from each frame and then string them together into a "barcode."
 
 Installation:
 -------------
