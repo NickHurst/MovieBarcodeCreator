@@ -11,6 +11,8 @@ Before you install moviebarcode creator, you will need to install ffmpeg. FFmpeg
     sudo apt-get install ffmpeg
     brew install ffmpeg
 
+*Note: If you are having troubles getting it to run on Windows because of FFMpeg install issues [see this wiki page](https://github.com/TheNickHurst/MovieBarcodeCreator/wiki/Windows-FFMpeg-Install) for a guide to setting it up*
+
 This script can be installed via pip (either python2 or 3):
 
     pip install moviebarcodecreator
