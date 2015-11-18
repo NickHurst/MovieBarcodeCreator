@@ -114,7 +114,7 @@ def distribute_frame_lists(n):
 
 def spawn_threads():
     # change directories if it already isn't in frames
-    if not '/frames' in os.getcwd():
+    if not 'frames' in os.getcwd():
         os.chdir('frames')
 
     q = queue.Queue()
