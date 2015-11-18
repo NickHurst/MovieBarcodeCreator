@@ -94,6 +94,10 @@ Examples:
 
 ![500 Days of Summer](http://i.imgur.com/JNlmwLc.png)
 
+####Mad Max: Fury Road
+
+![Mad Max: Fury Road](http://i.imgur.com/h6qKY7B.png)
+
 ####A Goofy Movie 
 
 *Default framerate*
