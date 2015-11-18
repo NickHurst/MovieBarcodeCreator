@@ -12,7 +12,7 @@ This script can be installed via pip (either python2 or 3):
 
 This will also install all dependencies. Or you can install it manually via:
 
-    python3 setup.py install
+    python setup.py install
 
 Usage:
 ------
