@@ -1,8 +1,8 @@
-import movie_barcode
+import moviebarcode.movie_barcode
 
 
 def main():
-    movie_barcode.main()
+    moviebarcode.movie_barcode.main()
 
 
 if __name__ == '__main__':
