@@ -64,7 +64,12 @@ def create_movie_frames(infile):
     output = open('ffmpeg_log.txt', 'w')
 
     print('Creating frames (this might take a while)...')
-    subprocess.call(ffmpeg_args, stderr=output, stdout=subprocess.PIPE)
+
+    try:
+        subprocess.call(ffmpeg_args, stderr=output, stdout=subprocess.PIPE)
+    except OSError:
+        print('Could not start FFmpeg process. Please make sure you have FFmpeg installed before running.')
+        exit(1)
 
     output.close()
 
