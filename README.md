@@ -6,6 +6,11 @@ This is a simple script to create "barcodes" from frames of a movie. This works 
 Installation:
 -------------
 
+Before you install moviebarcode creator, you will need to install ffmpeg. FFmpeg can be downloaded [here](https://www.ffmpeg.org/download.html). Or you can install it with your favorite package manager:
+
+    sudo apt-get install ffmpeg
+    brew install ffmpeg
+
 This script can be installed via pip (either python2 or 3):
 
     pip install moviebarcodecreator

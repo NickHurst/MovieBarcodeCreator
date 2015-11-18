@@ -39,7 +39,7 @@ parser.add_argument('-nd', '--nodelete', action='store_true',
                     help='Won\'t delete the movie frames after done executing.')
 parser.add_argument('-fr', '--framerate', type=str,
                     help='Set the framerate for breaking the movie into frames. Default is 1/24.')
-parser.add_argument('-t', '--threads', type=int,
+parser.add_argument('-t', '--threads', type=int, default=8,
                     help='Number of threads to be spawned when finding frame colors. Default is 8.')
 args = parser.parse_args()
 
@@ -113,7 +113,7 @@ def spawn_threads():
         os.chdir('frames')
 
     q = queue.Queue()
-    num_threads = args.threads if args.threads else 8
+    num_threads = args.threads
 
     # get a distributed list of images for the threads
     images = distribute_frame_lists(num_threads)

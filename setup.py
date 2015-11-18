@@ -9,7 +9,7 @@ with open(path.join(here, 'README_PyPi.rst'), encoding='utf-8') as f:
 
 setup(
     name='moviebarcodecreator',
-    version='0.6.6',
+    version='0.6.7',
     description='A tool to capture frames from a video and create a barcode from it.',
     long_description=long_description,
 
@@ -32,7 +32,7 @@ setup(
     keywords='movie barcode',
 
     packages=['moviebarcode'],
-    install_requires=['Pillow', 'imageio'],
+    install_requires=['Pillow'],
     entry_points={
         'console_scripts': [
             'moviebarcode = moviebarcode:main'
