@@ -40,6 +40,10 @@ Name of the generated barcode png. Default is barcode.
 
 Display the help information.
 
+####-im, -images
+
+Use this command if you want it to make a barcode from the frames themselves instead of the colors.
+
 ####-fc, --framecolors
 
 Use this if your already have a frame_colors.txt generated to skip frame and color generation. (Can't be used at the same time as -nf).
@@ -115,10 +119,14 @@ You can set the amount of threads python will use when generating the colors for
 
     moviebarcode VideoFileName.mp4 -en 2700
 
+####Make a barcode from the images of the frames, instead of the colors
+
+    moviebarcode VideoFileName.mpg -im
+
 Examples:
 ---------
 
-These examples were generated with:
+These examples were generated with (unless noted otherwise):
 
     moviebarcode VideoFile -ht 500 -w 2000
 
@@ -145,4 +153,10 @@ These examples were generated with:
 *higher framerate (1/2)*
 
 ![Goofy Movie Higher](http://i.imgur.com/zIejkfA.png)
+
+####Rick and Morty: Something Ricked This Way Comes
+
+*Generated with the -im and -fr 24*
+
+![Rick and Morty](http://i.imgur.com/hsDLYWu.png)
 
