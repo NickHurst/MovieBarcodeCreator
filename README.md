@@ -107,7 +107,7 @@ You can set the amount of threads python will use when generating the colors for
 
     moviebarcode VideoFileName.mkv -fr 1/2 -t 16
 
-####Start the video at 1 hour and 28 minutes and cut after 30 minutes
+####Start the video at 1 hour and 28 minutes and stop after 30 minutes
 
     moviebarcode VideoFileName.mp4 -ss 01:28:00.00 -d 00:30:00.00
 
