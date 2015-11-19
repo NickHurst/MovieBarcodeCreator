@@ -61,7 +61,7 @@ if args.noframes and not os.path.exists('frames'):
 if args.framecolors and not os.path.isfile('frame_colors.txt'):
     parser.error('the use frame_colors.txt argument was passed, but frame_colors.txt does not exist.')
 
-if args.images and ags.framecolors:
+if args.images and args.framecolors:
     parser.error('-im and -fc cannot be used together.')
 
 
@@ -73,9 +73,13 @@ def main():
         pass
 
     if not args.noframes and not args.framecolors:
-        ffmpg.create_movie_frames(args.infile, args.scale, args.start, args.duration, args.end)
+        ffmpg.create_movie_frames(args.infile, args.scale, args.framerate, 
+                                  args.start, args.duration, args.end)
 
-    if not args.images:
+    if args.images:
+        # create the barcode using images
+        ibg.spawn_image_threads(args.threads, args.outfile, args.barwidth, args.height, args.width)
+    else:
         if not args.framecolors:
             colors = cbg.spawn_threads(args.threads)
 
@@ -86,8 +90,6 @@ def main():
                 colors = [ast.literal_eval(line) for line in f]
 
         cbg.create_color_barcode(colors, args.barwidth, args.height, args.width, args.outfile)
-    else:
-        ibg.spawn_image_threads(args.threads, args.outfile, args.barwidth, args.height, args.width)
 
     if not args.nodelete:
         print('Cleaning up...')

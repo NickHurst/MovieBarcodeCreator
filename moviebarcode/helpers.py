@@ -8,12 +8,21 @@ from __future__ import unicode_literals
 import os, os.path
 
 def distribute_frame_lists(n):
-    img_list = [img for img in os.listdir(os.getcwd()) if img.endswith('.png')]
+    # build a list of images the threads need
+    # img_list = [img for img in os.listdir(os.getcwd()) if img.endswith('.png')]
+    img_list = []
+    for img in os.listdir(os.getcwd()):
+        if img.endswith('.png') and 'thread_' not in img:
+            img_list.append(img)
+
+    # determine the size each thread is going to get
     slice_size = len(img_list) // n
+    # check if it wasn't an even division
     remainder = len(img_list) % n
     result = []
     iterater = iter(img_list)
 
+    # build each threads image list
     for i in range(n):
         result.append([])
         for j in range(slice_size):

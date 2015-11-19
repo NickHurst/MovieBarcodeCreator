@@ -18,11 +18,14 @@ except ImportError:
 
 
 def find_frame_bar_color(infile, last_col=None):
+    # grab the dominant color
     img = Image.open(infile)
     result = img.convert('P', palette=Image.ADAPTIVE)
     result.putalpha(0)
     colors = result.getcolors()
 
+    # keep track of the last color to not have a bunch
+    # of repeating colors
     if last_col == colors[0][1]:
         return last_col
 
@@ -30,6 +33,8 @@ def find_frame_bar_color(infile, last_col=None):
 
 
 def get_image_colors(thread_id, q, images):
+    # build a list of all the colors from each threads
+    # set of images
     colors = []
     for img in images:
         colors.append(find_frame_bar_color(img))
@@ -42,6 +47,7 @@ def create_color_barcode(colors, bar_width, height, width, fname):
     bc = Image.new('RGB', (barcode_width, height))
     draw = ImageDraw.Draw(bc)
 
+    # draw the new barcode
     posx = 0
     print('Generating barcode...')
     for color in pyprind.prog_bar(colors):

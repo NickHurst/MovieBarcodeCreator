@@ -154,9 +154,9 @@ These examples were generated with (unless noted otherwise):
 
 ![Goofy Movie Higher](http://i.imgur.com/zIejkfA.png)
 
-####Rick and Morty: Something Ricked This Way Comes
+####Rick and Morty: The Wedding Squanchers
 
-*Generated with the -im and -fr 24*
+`moviebarcode VideoName -im -fr 1 -w 8000 -bw 640 -ht 2000`
 
-![Rick and Morty](http://i.imgur.com/hsDLYWu.png)
+![Rick and Morty](http://i.imgur.com/mCAWrKs.jpg)
 
