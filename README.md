@@ -89,6 +89,8 @@ Format: 01:08:45.000 or 109 (seconds).
 
 You can set the amount of threads python will use when generating the colors for the barcode. Default is 8.
 
+------------------------------
+
 ####Generate a barcode for a video that is 500x500 without deleting the frames:
 
     moviebarcode VideoFileName.avi -ht 500 -w 500 -nd
@@ -115,6 +117,10 @@ You can set the amount of threads python will use when generating the colors for
 
 Examples:
 ---------
+
+These examples were generated with:
+
+    moviebarcode VideoFile -ht 500 -w 2000
 
 ####Interstellar
 
