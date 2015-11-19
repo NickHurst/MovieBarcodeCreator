@@ -26,6 +26,8 @@ video_group = parser.add_argument_group('Video Options', 'options for customizin
 parser.add_argument('infile', type=str, nargs='?', help='video filename')
 parser.add_argument('-o', '--outfile', type=str, default='barcode.png',
                     help='name of the generated barcode. Default is barcode.png')
+parser.add_argument('-im', '--images', action='store_true',
+                    help='name of the generated barcode. Default is barcode.png')
 frame_group.add_argument('-fc', '--framecolors', action='store_true',
                     help='A frame_colors.txt file exists in the movies directory.')
 frame_group.add_argument('-nf', '--noframes', action='store_true',
@@ -38,8 +40,10 @@ barcode_group.add_argument('-ht', '--height', type=int, default=1200,
                     help='Set the height of the barcode. Default is 1200px.')
 barcode_group.add_argument('-w', '--width', type=int, default=1920,
                     help='Set the final width of the barcode. Default is 1920px.')
-video_group.add_argument('-fr', '--framerate', type=str,
+video_group.add_argument('-fr', '--framerate', type=str, default='1/24',
                          help='Set the framerate for breaking the movie into frames. Default is 1/24.')
+video_group.add_argument('-sc', '--scale', type=str, default='640x480',
+                         help='Set the scale of the frames generated. Default is 640x480.')
 video_group.add_argument('-ss', '--start', type=str,
                          help='Set the starting point in the video e.g. 01:08:45.000 or 83 (seconds)')
 video_group.add_argument('-d', '--duration', type=str,
@@ -64,7 +68,6 @@ if args.framecolors and not os.path.isfile('frame_colors.txt'):
 def create_movie_frames(infile):
     os.chdir('./frames')
 
-    framerate = args.framerate if args.framerate else '1/24'
     ffmpeg_args = ['ffmpeg', '-i', '../' + infile]
 
     if args.start:
@@ -74,9 +77,8 @@ def create_movie_frames(infile):
     if args.end:
         ffmpeg_args += ['-to', args.end]
 
-    ffmpeg_args += ['-r', framerate, '-f', 'image2', 'image-%07d.png']
-
-    print(' '.join(ffmpeg_args))
+    ffmpeg_args += ['-s', args.scale, '-r', args.framerate, '-f', 
+                    'image2', 'image-%09d.png']
 
     output = open('ffmpeg_log.txt', 'w')
 
@@ -161,7 +163,7 @@ def spawn_threads():
     return [item for sublist in thread_results for item in sublist]
 
 
-def create_barcode(colors, bar_width, height, width, fname):
+def create_color_barcode(colors, bar_width, height, width, fname):
     barcode_width = len(colors) * bar_width
     bc = Image.new('RGB', (barcode_width, height))
     draw = ImageDraw.Draw(bc)
@@ -178,6 +180,26 @@ def create_barcode(colors, bar_width, height, width, fname):
     bc.save(fname, 'PNG')
 
 
+def create_image_barcode(bar_width, height, width, fname):
+    if not 'frames' in os.getcwd():
+        os.chdir('frames')
+
+    img_list = [img for img in os.listdir(os.getcwd()) if img.endswith('.png')]
+    bc = Image.new('RGB', (bar_width * len(img_list), height))
+
+    posx = 0
+    print('Creating barcode...')
+    for img in img_list:
+        temp = Image.open(img)
+        temp.resize((bar_width, height), Image.ANTIALIAS)
+        bc.paste(temp, (posx, 0))
+
+        posx += bar_width
+
+    os.chdir('..')
+    bc.save(fname, 'PNG')
+
+
 def main():
     try:
         # attempt to create the directory structure if it doesn't exist
@@ -188,16 +210,19 @@ def main():
     if not args.noframes and not args.framecolors:
         create_movie_frames(args.infile)
 
-    if not args.framecolors:
-        colors = spawn_threads()
+    if not args.images:
+        if not args.framecolors:
+            colors = spawn_threads()
 
-        with open('frame_colors.txt', 'w') as f:
-            f.write('\n'.join('(%i, %i, %i, %i)' % x for x in colors))
+            with open('frame_colors.txt', 'w') as f:
+                f.write('\n'.join('(%i, %i, %i, %i)' % x for x in colors))
+        else:
+            with open('frame_colors.txt', 'r') as f:
+                colors = [ast.literal_eval(line) for line in f]
+
+        create_color_barcode(colors, args.barwidth, args.height, args.width, args.outfile)
     else:
-        with open('frame_colors.txt', 'r') as f:
-            colors = [ast.literal_eval(line) for line in f]
-
-    create_barcode(colors, args.barwidth, args.height, args.width, args.outfile)
+        create_image_barcode(args.barwidth, args.height, args.width, args.outfile)
 
     if not args.nodelete:
         print('Cleaning up...')

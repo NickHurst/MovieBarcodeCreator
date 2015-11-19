@@ -68,7 +68,7 @@ Set the final width of the barcode in pixels. Default is 1920px.
 
 ####-fr, --framerate FRAMERATE
 
-You can set FFMPEG's frame rate with this. Default is 1/24. Keep in mind, the higher you set the framerate, the more frames are going to be generated and the longer the process will take.
+You can set FFMPEG's frame rate with this. Default is 1/24 (1 frame every 24 seconds). Keep in mind, the higher you set the framerate (e.g. setting it to 24 will capture 24 frames per second the average fps for a movie), the more frames are going to be generated and the longer the process will take.
 
 ####-ss, --start START
 
