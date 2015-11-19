@@ -70,6 +70,21 @@ Set the final width of the barcode in pixels. Default is 1920px.
 
 You can set FFMPEG's frame rate with this. Default is 1/24. Keep in mind, the higher you set the framerate, the more frames are going to be generated and the longer the process will take.
 
+####-ss, --start START
+
+You can set the point you want ffmpeg to start cutting the video into frames.
+Format: 01:08:45.000 or 109 (seconds).
+
+####-d, --duration DURATION
+
+You can set how long you want ffmpeg to cut the video into frames.
+Format: 01:08:45.000 or 109 (seconds).
+
+####-en, --end END
+
+You can set the point you want ffmpeg to stop cutting the video into frames.
+Format: 01:08:45.000 or 109 (seconds).
+
 ####-t, --threads THREADS
 
 You can set the amount of threads python will use when generating the colors for the barcode. Default is 8.

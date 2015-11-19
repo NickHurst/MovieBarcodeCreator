@@ -22,6 +22,7 @@ except ImportError:
 parser = argparse.ArgumentParser()
 frame_group = parser.add_mutually_exclusive_group()
 barcode_group = parser.add_argument_group('Barcode Options', 'options for customizing the barcode.')
+video_group = parser.add_argument_group('Video Options', 'options for customizing the video')
 parser.add_argument('infile', type=str, nargs='?', help='video filename')
 parser.add_argument('-o', '--outfile', type=str, default='barcode.png',
                     help='name of the generated barcode. Default is barcode.png')
@@ -29,16 +30,22 @@ frame_group.add_argument('-fc', '--framecolors', action='store_true',
                     help='A frame_colors.txt file exists in the movies directory.')
 frame_group.add_argument('-nf', '--noframes', action='store_true',
                     help='Won\'t create the frames. Must already have them in a directory called frames.')
+parser.add_argument('-nd', '--nodelete', action='store_true',
+                    help='Won\'t delete the movie frames after done executing.')
 barcode_group.add_argument('-bw', '--barwidth', type=int, default=5,
                     help='Set the width of the bars in the barcode. Default is 5px.')
 barcode_group.add_argument('-ht', '--height', type=int, default=1200,
                     help='Set the height of the barcode. Default is 1200px.')
 barcode_group.add_argument('-w', '--width', type=int, default=1920,
                     help='Set the final width of the barcode. Default is 1920px.')
-parser.add_argument('-nd', '--nodelete', action='store_true',
-                    help='Won\'t delete the movie frames after done executing.')
-parser.add_argument('-fr', '--framerate', type=str,
-                    help='Set the framerate for breaking the movie into frames. Default is 1/24.')
+video_group.add_argument('-fr', '--framerate', type=str,
+                         help='Set the framerate for breaking the movie into frames. Default is 1/24.')
+video_group.add_argument('-ss', '--start', type=str,
+                         help='Set the starting point in the video e.g. 01:08:45.000 or 83 (seconds)')
+video_group.add_argument('-d', '--duration', type=str,
+                         help='Set the duration for the video e.g. 01:08:45.000 or 83 (seconds).')
+video_group.add_argument('-en', '--end', type=str,
+                         help='Set the duration end point for the video e.g. 01:08:45.000 or 83 (seconds).')
 parser.add_argument('-t', '--threads', type=int, default=8,
                     help='Number of threads to be spawned when finding frame colors. Default is 8.')
 args = parser.parse_args()
@@ -58,8 +65,18 @@ def create_movie_frames(infile):
     os.chdir('./frames')
 
     framerate = args.framerate if args.framerate else '1/24'
-    ffmpeg_args = ['ffmpeg', '-threads', '0', '-i', '../' + infile, '-r', framerate,
-                   '-f', 'image2', 'image-%07d.png']
+    ffmpeg_args = ['ffmpeg', '-i', '../' + infile]
+
+    if args.start:
+        ffmpeg_args += ['-ss', args.start]
+    if args.duration:
+        ffmpeg_args += ['-t', args.duration]
+    if args.end:
+        ffmpeg_args += ['-to', args.end]
+
+    ffmpeg_args += ['-r', framerate, '-f', 'image2', 'image-%07d.png']
+
+    print(' '.join(ffmpeg_args))
 
     output = open('ffmpeg_log.txt', 'w')
 
