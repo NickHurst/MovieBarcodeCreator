@@ -91,7 +91,7 @@ You can set the amount of threads python will use when generating the colors for
 
 ####Generate a barcode for a video that is 500x500 without deleting the frames:
 
-    moviebarcode VideoFileName.mpg -ht 500 -w 500 -nd
+    moviebarcode VideoFileName.avi -ht 500 -w 500 -nd
 
 ####Generate a barcode from previously generated frames and name the barcode test.png:
 
@@ -103,7 +103,15 @@ You can set the amount of threads python will use when generating the colors for
 
 ####Generate a barcode with a higher framerate and more threads:
 
-    moviebarcode VideoFileName.mpg -fr 1/2 -t 16
+    moviebarcode VideoFileName.mkv -fr 1/2 -t 16
+
+####Start the video at 1 hour and 28 minutes and cut for 30 minutes
+
+    moviebarcode VideoFileName.mp4 -ss 01:28:00.00 -d 00:30:00.00
+
+####End the video at the 45 minute mark
+
+    moviebarcode VideoFileName.mp4 -en 2700
 
 Examples:
 ---------
