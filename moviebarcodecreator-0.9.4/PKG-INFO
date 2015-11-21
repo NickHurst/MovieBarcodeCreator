@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: moviebarcodecreator
+Version: 0.9.4
+Summary: A tool to capture frames from a video and create a barcode from it.
+Home-page: https://github.com/TheNickHurst/MovieBarcodeCreator
+Author: Nick Hurst
+Author-email: nickthurst@gmail.com
+License: MIT
+Description: ======================
+        Movie Barcode Creator
+        ======================
+        
+        See `README <https://github.com/TheNickHurst/MovieBarcodeCreator/blob/master/README.md>` for more information.
+Keywords: movie barcode
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Topic :: Multimedia :: Video
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
